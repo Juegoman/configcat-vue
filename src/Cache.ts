@@ -2,6 +2,10 @@ import { ICache, ProjectConfig } from "configcat-common";
 
 export class LocalStorageCache implements ICache {
     cache: { [key: string]: ProjectConfig } = {};
+    private readonly onCacheUpdate: (cache: ProjectConfig) => void;
+    constructor(onCacheUpdate: (cache: ProjectConfig) => void) {
+        this.onCacheUpdate = onCacheUpdate;
+    }
 
     set(key: string, config: ProjectConfig): void {
         this.cache[key] = config;
@@ -11,6 +15,7 @@ export class LocalStorageCache implements ICache {
         } catch (ex) {
             // local storage is unavailable
         }
+        this.onCacheUpdate(config);
     }
 
     get(key: string): ProjectConfig {
@@ -22,9 +27,11 @@ export class LocalStorageCache implements ICache {
         try {
             const configString: string = localStorage.getItem(key);
             if (configString) {
-                const config: ProjectConfig = JSON.parse(atob(configString));
+                const { timestamp, ConfigJSON, HttpETag } = JSON.parse(atob(configString));
+                const config: ProjectConfig = new ProjectConfig(timestamp, ConfigJSON, HttpETag);
                 if (config) {
                     this.cache[key] = config;
+                    this.onCacheUpdate(config);
                     return config;
                 }
             }

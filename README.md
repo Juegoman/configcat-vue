@@ -1,4 +1,84 @@
-# ConfigCat SDK for JavaScript frontend applications
+# ConfigCat SDK for Vue.js frontend applications
+
+Adds Vue.js plugin to connect to ConfigCat
+
+Currently only `auto` and `manual` fetching modes are functional
+
+## Usage
+
+```js
+import Vue from 'vue';
+import ConfigcatVue from 'configcat-vue';
+const sdkKey = 'abc/123'; // SDK key from configcat
+const mode = null; // optional, defaults to 'auto', can be 'manual' too
+const opts = {}; // also optional, this is the regular configcat options object
+
+Vue.use(ConfigcatVue, { SDK_KEY: sdkKey, POLLING_MODE: mode, options: opts });
+```
+
+```vue
+<template>
+    <div>
+        <div v-feature-flag="'myAwesomeFeatureFlag'">
+            if feature flag "myAwesomeFeatureFlag" is on, then this element will be visible
+        </div>
+        <div v-if="otherFlag">ogey</div>
+        <div v-if="myOGConfigCatFlag">rrat</div>
+        <button @click="forceCCRefresh">Force configcat refresh</button>
+    </div>
+</template>
+<script>
+export default {
+    data() {
+        return {
+            myOGConfigCatFlag: false,
+        }
+    },
+    computed: {
+        /*
+            you can access the currently cached feature flag values
+            by calling this.$configcat.getCachedValue()
+        */
+        otherFlag() {
+            this.$configcat.getCachedValue('myOtherFeatureFlag', false);
+        },
+    },
+    methods: {
+        /*
+            configcat client is accessible through the this.$configcat.client property
+        */
+        forceCCRefresh() {
+          this.$configcat.client.forceRefreshAsync();  
+        },
+    },
+    async mounted() {
+        /*
+            this.$configcat.getValue() passes the key and the default value
+            into the configcat client getValueAsync() method
+        */
+        this.myOGConfigCatFlag = await this.$configcat.getValue('myOGConfigCatFlag', false)
+    },
+};
+</script>
+```
+
+## `v-feature-flag` directive
+if the feature flag string passed into the directive is false then sets `display: none` on the element
+
+assumes default value of `false`
+
+## `$configcat` interface
+| property | description |
+|---|---|
+| `client` | current instantiated configcat client |
+| `user` | configcat user object |
+| `getCachedValue(key, defaultValue)` | get currently cached feature flag |
+| `async getValue(key, defaultValue)` | get feature flag, potentially refreshing the feature flags state from configcat |
+| `setUser({ identifier, email, country, custom })` | set the currently stored user object to send to configcat |
+
+
+#Original README
+
 https://configcat.com
 
 ConfigCat SDK for JavaScript provides easy integration for your application to ConfigCat.
