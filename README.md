@@ -77,7 +77,7 @@ assumes default value of `false`
 | `setUser({ identifier, email, country, custom })` | set the currently stored user object to send to configcat |
 
 
-#Original README
+# Original README
 
 https://configcat.com
 
