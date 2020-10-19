@@ -1,10 +1,21 @@
-import * as configcatcommon from "configcat-common";
+import {
+    DataGovernance,
+    IConfigCatClient,
+    IConfigCatLogger,
+    LogLevel,
+    ProjectConfig,
+    createClientWithManualPoll,
+    createClientWithLazyLoad,
+    createClientWithAutoPoll,
+    createConsoleLogger,
+    IAutoPollOptions,
+    ILazyLoadingOptions,
+    IManualPollOptions,
+} from "configcat-common";
 import { HttpConfigFetcher } from "./ConfigFetcher";
-import { DataGovernance, IConfigCatClient, IConfigCatLogger, LogLevel, ProjectConfig } from "configcat-common";
 import { LocalStorageCache } from "./Cache";
 import { RolloutEvaluator } from "configcat-common/lib/RolloutEvaluator";
 import { VueConstructor } from "vue";
-import { IOptions } from "configcat-common/lib/ConfigCatClientOptions";
 
 /**
  * Create an instance of ConfigCatClient and setup Auto polling with default options.
@@ -21,12 +32,12 @@ import { IOptions } from "configcat-common/lib/ConfigCatClientOptions";
  * @param cache - cache
  * @param options - Options for Auto polling
  */
-export function createClientWithAutoPoll(
+export function clientAutoPoll(
     sdkKey: string,
     cache: LocalStorageCache,
     options?: IJSAutoPollOptions,
 ): IConfigCatClient {
-    return configcatcommon.createClientWithAutoPoll(sdkKey, { configFetcher: new HttpConfigFetcher(), cache }, options);
+    return createClientWithAutoPoll(sdkKey, { configFetcher: new HttpConfigFetcher(), cache }, options);
 }
 
 /**
@@ -35,12 +46,12 @@ export function createClientWithAutoPoll(
  * @param cache - cache
  * @param options - Options for Manual polling
  */
-export function createClientWithManualPoll(
+export function clientManualPoll(
     sdkKey: string,
     cache: LocalStorageCache,
     options?: IJSManualPollOptions,
 ): IConfigCatClient {
-    return configcatcommon.createClientWithManualPoll(
+    return createClientWithManualPoll(
         sdkKey,
         {
             configFetcher: new HttpConfigFetcher(),
@@ -56,29 +67,29 @@ export function createClientWithManualPoll(
  * @param cache - cache
  * @param options - Options for Lazy loading
  */
-export function createClientWithLazyLoad(
+export function clientLazyLoad(
     sdkKey: string,
     cache: LocalStorageCache,
     options?: IJSLazyLoadingOptions,
 ): IConfigCatClient {
-    return configcatcommon.createClientWithLazyLoad(sdkKey, { configFetcher: new HttpConfigFetcher(), cache }, options);
+    return createClientWithLazyLoad(sdkKey, { configFetcher: new HttpConfigFetcher(), cache }, options);
 }
 
-export function createConsoleLogger(logLevel: LogLevel): configcatcommon.IConfigCatLogger {
-    return configcatcommon.createConsoleLogger(logLevel);
+export function makeConsoleLogger(logLevel: LogLevel): IConfigCatLogger {
+    return createConsoleLogger(logLevel);
 }
 
-export type IJSAutoPollOptions = configcatcommon.IAutoPollOptions;
+export type IJSAutoPollOptions = IAutoPollOptions;
 
-export type IJSLazyLoadingOptions = configcatcommon.ILazyLoadingOptions;
+export type IJSLazyLoadingOptions = ILazyLoadingOptions;
 
-export type IJSManualPollOptions = configcatcommon.IManualPollOptions;
+export type IJSManualPollOptions = IManualPollOptions;
 
 export const DataGovernanceValues = {
     /** Select this if your feature flags are published to all global CDN nodes. */
-    Global: configcatcommon.DataGovernance.Global,
+    Global: DataGovernance.Global,
     /** Select this if your feature flags are published to CDN nodes only in the EU. */
-    EuOnly: configcatcommon.DataGovernance.EuOnly,
+    EuOnly: DataGovernance.EuOnly,
 };
 export type ConfigcatOptionsCombined = {
     // common
@@ -128,14 +139,14 @@ const VueConfigcat = {
         let configcatClient;
         switch (POLLING_MODE) {
             // case "lazy":
-            //     configcatClient = createClientWithLazyLoad(SDK_KEY, configcatCache, options);
+            //     configcatClient = clientLazyLoad(SDK_KEY, configcatCache, options);
             //     break;
             case "manual":
-                configcatClient = createClientWithManualPoll(SDK_KEY, configcatCache, options);
+                configcatClient = clientManualPoll(SDK_KEY, configcatCache, options);
                 break;
             case "auto":
             default:
-                configcatClient = createClientWithAutoPoll(SDK_KEY, configcatCache, options);
+                configcatClient = clientAutoPoll(SDK_KEY, configcatCache, options);
                 break;
         }
         Vue.prototype.$configcat = {
