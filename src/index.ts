@@ -12,31 +12,18 @@ import {
     ILazyLoadingOptions,
     IManualPollOptions,
 } from "configcat-common";
+import { RolloutEvaluator } from "configcat-common/lib/RolloutEvaluator";
 import { HttpConfigFetcher } from "./ConfigFetcher";
 import { LocalStorageCache } from "./Cache";
-import { RolloutEvaluator } from "configcat-common/lib/RolloutEvaluator";
 import { VueConstructor } from "vue";
 
 /**
- * Create an instance of ConfigCatClient and setup Auto polling with default options.
- * @param {string} sdkkey - SDK Key to access your configuration.
- * @param options - Options for Auto polling
- */
-// export function createClient(sdkkey: string, options?: IJSAutoPollOptions): IConfigCatClient {
-//     return createClientWithAutoPoll(sdkkey, options);
-// }
-
-/**
  * Create an instance of ConfigCatClient and setup Auto polling.
- * @param {string} sdkkey - SDK Key to access your configuration.
+ * @param {string} sdkKey - SDK Key to access your configuration.
  * @param cache - cache
  * @param options - Options for Auto polling
  */
-export function clientAutoPoll(
-    sdkKey: string,
-    cache: LocalStorageCache,
-    options?: IJSAutoPollOptions,
-): IConfigCatClient {
+function clientAutoPoll(sdkKey: string, cache: LocalStorageCache, options?: IAutoPollOptions): IConfigCatClient {
     return createClientWithAutoPoll(sdkKey, { configFetcher: new HttpConfigFetcher(), cache }, options);
 }
 
@@ -46,11 +33,7 @@ export function clientAutoPoll(
  * @param cache - cache
  * @param options - Options for Manual polling
  */
-export function clientManualPoll(
-    sdkKey: string,
-    cache: LocalStorageCache,
-    options?: IJSManualPollOptions,
-): IConfigCatClient {
+function clientManualPoll(sdkKey: string, cache: LocalStorageCache, options?: IManualPollOptions): IConfigCatClient {
     return createClientWithManualPoll(
         sdkKey,
         {
@@ -67,23 +50,17 @@ export function clientManualPoll(
  * @param cache - cache
  * @param options - Options for Lazy loading
  */
-export function clientLazyLoad(
-    sdkKey: string,
-    cache: LocalStorageCache,
-    options?: IJSLazyLoadingOptions,
-): IConfigCatClient {
-    return createClientWithLazyLoad(sdkKey, { configFetcher: new HttpConfigFetcher(), cache }, options);
-}
+// function clientLazyLoad(sdkKey: string, cache: LocalStorageCache, options?: ILazyLoadingOptions): IConfigCatClient {
+//     return createClientWithLazyLoad(sdkKey, { configFetcher: new HttpConfigFetcher(), cache }, options);
+// }
 
+/**
+ * alias for createConsoleLogger configcat function
+ * @param logLevel
+ */
 export function makeConsoleLogger(logLevel: LogLevel): IConfigCatLogger {
     return createConsoleLogger(logLevel);
 }
-
-export type IJSAutoPollOptions = IAutoPollOptions;
-
-export type IJSLazyLoadingOptions = ILazyLoadingOptions;
-
-export type IJSManualPollOptions = IManualPollOptions;
 
 export const DataGovernanceValues = {
     /** Select this if your feature flags are published to all global CDN nodes. */
@@ -198,7 +175,6 @@ const VueConfigcat = {
         Vue.mixin({
             watch: {
                 "$configcat.cache"() {
-                    console.log("cache updated");
                     this.$forceUpdate();
                 },
             },
