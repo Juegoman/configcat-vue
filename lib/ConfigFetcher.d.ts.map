@@ -1,0 +1,1 @@
+{"version":3,"file":"ConfigFetcher.d.ts","sourceRoot":"","sources":["../src/ConfigFetcher.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,aAAa,EAAE,WAAW,EAAE,MAAM,kBAAkB,CAAC;AAE9E,qBAAa,iBAAkB,YAAW,cAAc;IACpD,UAAU,CACN,OAAO,EAAE,WAAW,EACpB,iBAAiB,EAAE,aAAa,EAChC,QAAQ,EAAE,CAAC,gBAAgB,EAAE,aAAa,KAAK,IAAI,GACpD,IAAI;CA6BV;AAED,eAAe,cAAc,CAAC"}
