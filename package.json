@@ -1,6 +1,6 @@
 {
     "name": "configcat-vue",
-    "version": "5.3.0",
+    "version": "5.4.0",
     "description": "ConfigCat is a configuration as a service that lets you manage your features and configurations without actually deploying new code.",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -9,7 +9,6 @@
         "test": "karma start",
         "build": "tsc -p tsconfig.cjs.json && tsc -p tsconfig.esm.json",
         "buildPure": "webpack",
-        "prepare": "npm run build",
         "lint": "eslint . --ext .ts",
         "lint-fix": "eslint . --ext .ts --fix"
     },
@@ -26,7 +25,7 @@
         "soft launch",
         "release strategy"
     ],
-    "author": "ConfigCat",
+    "author": "Juegoman",
     "license": "MIT",
     "homepage": "https://configcat.com",
     "dependencies": {
@@ -62,7 +61,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/configcat/js-sdk"
+        "url": "https://github.com/juegoman/configcat-vue"
     },
     "sideEffects": false
 }
